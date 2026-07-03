@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+# SPEC.md D10 — mechanically reject AI-attribution strings in commit messages.
+# Activated via: git config core.hooksPath .githooks
+
+MSG_FILE="$1"
+
+if grep -qiE 'claude|anthropic|co-authored-by|generated with|🤖' "$MSG_FILE"; then
+  echo "commit-msg hook: AI-attribution string detected — commit rejected (SPEC.md D10)." >&2
+  exit 1
+fi
+
+exit 0

@@ -1,0 +1,21 @@
+# Exact pins, pairwise-compatibility verified 2026-07 (SPEC-AMENDMENTS.md).
+# Docker installs torch FIRST from the CPU wheel index to avoid multi-GB CUDA wheels:
+#   pip install torch==2.12.1 --index-url https://download.pytorch.org/whl/cpu
+# httpx is capped by supabase (<0.29); do not bump independently.
+fastapi==0.139.0
+uvicorn==0.49.0
+pydantic==2.13.4
+pydantic-settings==2.14.2
+httpx==0.28.1
+structlog==26.1.0
+sentence-transformers==5.6.0
+torch==2.12.1
+transformers==5.13.0
+# cardiffnlp/twitter-xlm-roberta-base-sentiment ships only a SentencePiece
+# tokenizer (no tokenizer.json) — these extras are mandatory for the fallback:
+sentencepiece==0.2.1
+protobuf==7.35.1
+supabase==2.31.0
+pytest==9.1.1
+pytest-asyncio==1.4.0
+pytest-httpx==0.36.2
