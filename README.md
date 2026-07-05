@@ -1,3 +1,13 @@
+---
+title: SignalForge
+emoji: 🛰️
+colorFrom: indigo
+colorTo: blue
+sdk: docker
+app_port: 7860
+pinned: false
+---
+
 # SignalForge
 
 **Production-grade NLP inference service on Hugging Face open-source models** — multi-language sentiment with API/local fallback, zero-shot document classification, and local embeddings with pgvector semantic search. FastAPI, CPU-only, $0 infrastructure.
