@@ -123,9 +123,29 @@ curl -s -X POST $BASE/api/v1/search \
 
 Deployed on [Hugging Face Spaces](https://huggingface.co/spaces) (free Docker SDK, CPU basic):
 
-**`<SPACE_URL>`** (placeholder — replace with your deployed Space URL after following [DEPLOYMENT.md](./docs/DEPLOYMENT.md))
+**[https://sheryyahmed457-signalforge.hf.space](https://sheryyahmed457-signalforge.hf.space)** — open [`/docs`](https://sheryyahmed457-signalforge.hf.space/docs) for the interactive Swagger UI (the demo surface).
 
 ⚠️ **Important:** The free Hugging Face Space sleeps after ~48 hours of inactivity (~1 minute cold wake on first request). Supabase free tier pauses after ~7 idle days and requires manual dashboard resume. See [SCALING.md](./docs/SCALING.md) for honest free-tier limits and production upgrade paths. A daily GitHub Actions keep-alive ping (`.github/workflows/keepalive.yml`) mitigates both.
+
+## Screenshots
+
+Captured live from the deployed Space — each shot shows the public `https://sheryyahmed457-signalforge.hf.space` URL and the full `inference_metadata`.
+
+**Interactive API (Swagger UI) — all five endpoints:**
+
+![Swagger UI overview](docs/screenshots/01-docs-overview.png)
+
+**Multi-language sentiment (served by the Hugging Face API path):**
+
+![Sentiment response](docs/screenshots/02-sentiment.png)
+
+**Zero-shot classification with a caller-supplied label set:**
+
+![Classify response](docs/screenshots/03-classify.png)
+
+**Semantic search over Supabase pgvector:**
+
+![Search response](docs/screenshots/04-search.png)
 
 ## Documentation
 
