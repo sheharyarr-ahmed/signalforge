@@ -17,12 +17,20 @@ fi
 
 cd "$(dirname "$0")/.." || exit 0
 
+# Prefer the project virtualenv if present (local dev); fall back to system
+# python3 (Docker / global installs where deps live on python3 directly).
+if [ -x ".venv/bin/python" ]; then
+  PY=".venv/bin/python"
+else
+  PY="python3"
+fi
+
 # Phase-0 tolerance: pytest not installed yet, or no tests collected (exit 5).
-if ! python3 -c "import pytest" >/dev/null 2>&1; then
+if ! "$PY" -c "import pytest" >/dev/null 2>&1; then
   exit 0
 fi
 
-output="$(python3 -m pytest -q 2>&1)"
+output="$("$PY" -m pytest -q 2>&1)"
 status=$?
 
 if [ "$status" -eq 5 ]; then
