@@ -1,0 +1,43 @@
+name: Keep-alive
+
+# A7 exception to "no CI/CD" rule: this is a keep-alive ping, not a pipeline.
+# Keeps the free Hugging Face Space awake (prevents 48 h sleep) and Supabase
+# free tier active (prevents 7-day pause). Runs daily and on manual trigger.
+# Zero cost ($0 GitHub Actions usage on free tier).
+
+on:
+  schedule:
+    # Run daily at 09:00 UTC (adjust to your timezone if needed)
+    - cron: '0 9 * * *'
+  workflow_dispatch:
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping Space and Supabase
+        run: |
+          SPACE_URL="${{ vars.SPACE_URL }}"
+
+          if [ -z "$SPACE_URL" ]; then
+            echo "Error: SPACE_URL variable not set. Set it in repo Settings > Secrets and variables > Variables"
+            exit 1
+          fi
+
+          echo "Pinging Space at $SPACE_URL..."
+
+          # Health check: lightweight and always succeeds if Space is up
+          echo "Step 1: GET /health"
+          curl -s --max-time 120 "$SPACE_URL/health" | jq . || echo "Health check timed out (Space may be waking)"
+
+          # Sleep briefly to allow Space to fully wake if it was sleeping
+          echo "Waiting for Space to fully initialize..."
+          sleep 10
+
+          # Search query: keeps Supabase active (queries the pgvector database)
+          echo "Step 2: POST /api/v1/search (keeps Supabase active)"
+          curl -s --max-time 120 -X POST "$SPACE_URL/api/v1/search" \
+            -H 'Content-Type: application/json' \
+            -d '{"query":"ping","k":1}' | jq . || echo "Search query timed out (Supabase may be paused or waking)"
+
+          echo "Keep-alive ping complete."
