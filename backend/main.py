@@ -1,12 +1,19 @@
+from pathlib import Path
+
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse
+from fastapi.openapi.docs import get_swagger_ui_html
+from fastapi.responses import FileResponse, HTMLResponse, JSONResponse
+from fastapi.staticfiles import StaticFiles
 
 from backend.config import get_settings
 from backend.routers import classify, embeddings, health, sentiment
 from backend.schemas.common import ErrorResponse
 from backend.utils.errors import HFError, VectorStoreError
 from backend.utils.logging import configure_logging
+
+STATIC_DIR = Path(__file__).parent / "static"
+FAVICON = STATIC_DIR / "favicon.png"
 
 
 def register_exception_handlers(app: FastAPI) -> None:
@@ -36,7 +43,9 @@ def register_exception_handlers(app: FastAPI) -> None:
 def create_app() -> FastAPI:
     configure_logging(get_settings().log_level)
 
-    app = FastAPI(title="SignalForge", version="1.0.0", docs_url="/docs")
+    # docs_url=None: the default Swagger route is replaced below so the demo
+    # page carries the SignalForge favicon instead of FastAPI's.
+    app = FastAPI(title="SignalForge", version="1.0.0", docs_url=None)
 
     app.add_middleware(
         CORSMiddleware,
@@ -44,6 +53,20 @@ def create_app() -> FastAPI:
         allow_methods=["*"],
         allow_headers=["*"],
     )
+
+    app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
+
+    @app.get("/favicon.ico", include_in_schema=False)
+    async def favicon() -> FileResponse:
+        return FileResponse(FAVICON, media_type="image/png")
+
+    @app.get("/docs", include_in_schema=False)
+    async def swagger_ui() -> HTMLResponse:
+        return get_swagger_ui_html(
+            openapi_url=app.openapi_url,
+            title=f"{app.title} — API docs",
+            swagger_favicon_url="/static/favicon.png",
+        )
 
     app.include_router(health.router)
     app.include_router(sentiment.router, prefix="/api/v1")

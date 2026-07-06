@@ -2,17 +2,34 @@
 title: SignalForge
 emoji: 🛰️
 colorFrom: indigo
-colorTo: blue
+colorTo: pink
 sdk: docker
 app_port: 7860
 pinned: false
+thumbnail: https://raw.githubusercontent.com/sheharyarr-ahmed/signalforge/main/docs/brand/og-card.png
 ---
+
+<p align="center">
+  <img src="docs/brand/hf-cover.png" alt="SignalForge — Text in. Signal out." width="720">
+</p>
 
 # SignalForge
 
 **Production-grade NLP inference service on Hugging Face open-source models** — multi-language sentiment with API/local fallback, zero-shot document classification, and local embeddings with pgvector semantic search. FastAPI, CPU-only, $0 infrastructure.
 
 Demonstrates three Hugging Face model deployments without GPU or paid compute, proving open-source ML deployment capability for Hugging Face ecosystem and NLP automation jobs.
+
+## Capabilities
+
+<table>
+  <tr align="center">
+    <td><img src="docs/brand/features/png/sentiment-tile-256.png" width="72" alt=""><br><sub><b>Sentiment</b><br>multi-language<br>+ local fallback</sub></td>
+    <td><img src="docs/brand/features/png/zero-shot-tile-256.png" width="72" alt=""><br><sub><b>Zero-shot</b><br>custom label<br>classification</sub></td>
+    <td><img src="docs/brand/features/png/embeddings-tile-256.png" width="72" alt=""><br><sub><b>Embeddings</b><br>local 384-dim<br>vectors</sub></td>
+    <td><img src="docs/brand/features/png/semantic-search-tile-256.png" width="72" alt=""><br><sub><b>Semantic search</b><br>Supabase<br>pgvector</sub></td>
+    <td><img src="docs/brand/features/png/observability-tile-256.png" width="72" alt=""><br><sub><b>Observability</b><br>inference_metadata<br>on every response</sub></td>
+  </tr>
+</table>
 
 ## Architecture
 
