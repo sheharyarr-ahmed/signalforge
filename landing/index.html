@@ -1,0 +1,243 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SignalForge — Production-grade NLP inference API</title>
+  <meta name="description" content="Production-grade NLP inference microservice on open-source Hugging Face models. Multi-language sentiment, zero-shot classification, local embeddings, and pgvector semantic search. FastAPI, CPU-only.">
+  <link rel="icon" type="image/png" href="/assets/favicon.png">
+  <link rel="apple-touch-icon" href="/assets/icon-192.png">
+
+  <!-- Open Graph / social -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="SignalForge — Production-grade NLP inference API">
+  <meta property="og:description" content="Open-source models. One clean API. Sentiment · zero-shot · embeddings · semantic search — FastAPI, CPU-only.">
+  <meta property="og:image" content="/assets/og-card.png">
+  <meta name="twitter:card" content="summary_large_image">
+
+  <style>
+    :root{
+      --blue:#2540E8; --blue-deep:#1E3A8A; --pink:#EC4899; --pink-light:#F472B6;
+      --bg:#0B1020; --bg-2:#10162e; --card:#131a33; --line:#232c4d;
+      --ink:#F8FAFC; --muted:#9aa6c8; --muted-2:#6f7ba3;
+      --grad:linear-gradient(135deg,var(--blue),var(--pink));
+      --mono:"JetBrains Mono",ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+      --sans:"Space Grotesk",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    }
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{
+      margin:0;font-family:var(--sans);color:var(--ink);background:var(--bg);
+      line-height:1.5;-webkit-font-smoothing:antialiased;
+      background-image:
+        radial-gradient(60rem 40rem at 80% -10%, rgba(236,72,153,.14), transparent 60%),
+        radial-gradient(55rem 38rem at -10% 0%, rgba(37,64,232,.18), transparent 60%);
+      background-repeat:no-repeat;
+    }
+    a{color:inherit;text-decoration:none}
+    .wrap{max-width:1080px;margin:0 auto;padding:0 24px}
+    .accent-bar{height:4px;background:var(--grad)}
+
+    /* nav */
+    nav{display:flex;align-items:center;justify-content:space-between;padding:20px 0}
+    .brand{display:flex;align-items:center;gap:12px;font-weight:700;font-size:1.15rem;letter-spacing:-.01em}
+    .brand img{width:34px;height:34px;border-radius:9px}
+    .nav-links{display:flex;gap:22px;align-items:center;font-size:.95rem;color:var(--muted)}
+    .nav-links a:hover{color:var(--ink)}
+    .nav-links .ghost{border:1px solid var(--line);padding:8px 16px;border-radius:9px}
+    .nav-links .ghost:hover{border-color:var(--pink-light);color:var(--ink)}
+
+    /* hero */
+    .hero{text-align:center;padding:64px 0 40px}
+    .hero-glyph{width:96px;height:96px;border-radius:24px;box-shadow:0 20px 60px -20px rgba(37,64,232,.6)}
+    .hero h1{font-size:clamp(2.6rem,7vw,4.6rem);margin:24px 0 8px;letter-spacing:-.03em;line-height:1}
+    .hero .tag{font-family:var(--mono);color:var(--muted);font-size:clamp(1rem,2.4vw,1.25rem)}
+    .hero .sub{max-width:640px;margin:20px auto 0;color:var(--muted);font-size:1.05rem}
+    .cta{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin-top:32px}
+    .btn{display:inline-flex;align-items:center;gap:9px;padding:13px 24px;border-radius:11px;font-weight:600;font-size:1rem;transition:transform .12s ease,box-shadow .12s ease}
+    .btn.primary{background:var(--grad);color:#fff;box-shadow:0 12px 30px -10px rgba(236,72,153,.55)}
+    .btn.primary:hover{transform:translateY(-2px);box-shadow:0 16px 38px -10px rgba(236,72,153,.7)}
+    .btn.secondary{border:1px solid var(--line);color:var(--ink)}
+    .btn.secondary:hover{border-color:var(--pink-light);transform:translateY(-2px)}
+
+    .chips{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:28px;font-family:var(--mono);font-size:.82rem;color:var(--muted-2)}
+    .chips span{border:1px solid var(--line);border-radius:999px;padding:5px 13px}
+
+    /* sections */
+    section{padding:52px 0}
+    .eyebrow{font-family:var(--mono);font-size:.8rem;letter-spacing:.12em;text-transform:uppercase;color:var(--pink-light)}
+    h2{font-size:clamp(1.6rem,4vw,2.2rem);letter-spacing:-.02em;margin:8px 0 4px}
+    .lede{color:var(--muted);max-width:640px;margin:0 0 28px}
+
+    /* capabilities */
+    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:18px}
+    .card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:24px}
+    .card img{width:52px;height:52px;border-radius:12px;margin-bottom:14px}
+    .card h3{margin:0 0 6px;font-size:1.08rem}
+    .card p{margin:0;color:var(--muted);font-size:.92rem}
+
+    /* endpoints */
+    .table-scroll{overflow-x:auto;border:1px solid var(--line);border-radius:16px}
+    table{border-collapse:collapse;width:100%;min-width:640px;font-size:.92rem}
+    th,td{text-align:left;padding:14px 18px;border-bottom:1px solid var(--line)}
+    tbody tr:last-child td{border-bottom:none}
+    th{font-family:var(--mono);font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted-2);background:var(--bg-2)}
+    td code{font-family:var(--mono);color:var(--pink-light);font-size:.9em}
+    .method{font-family:var(--mono);font-weight:700;color:var(--blue);font-size:.85em}
+
+    /* code sample */
+    .code{background:#0a0f22;border:1px solid var(--line);border-radius:16px;overflow:hidden}
+    .code-head{display:flex;gap:8px;padding:14px 18px;border-bottom:1px solid var(--line)}
+    .dot{width:11px;height:11px;border-radius:50%}
+    .dot.r{background:#ff5f57}.dot.y{background:#febc2e}.dot.g{background:#28c840}
+    pre{margin:0;padding:20px 18px;overflow-x:auto;font-family:var(--mono);font-size:.86rem;line-height:1.7}
+    .c-cmd{color:#c9d3f5}.c-key{color:var(--pink-light)}.c-str{color:#7ee3b8}.c-com{color:var(--muted-2)}.c-bool{color:#f0b458}
+
+    /* note */
+    .note{display:flex;gap:14px;align-items:flex-start;background:var(--bg-2);border:1px solid var(--line);border-left:3px solid var(--pink);border-radius:14px;padding:20px 22px}
+    .note .ico{font-size:1.3rem;line-height:1.2}
+    .note p{margin:0;color:var(--muted);font-size:.94rem}
+    .note b{color:var(--ink)}
+
+    footer{border-top:1px solid var(--line);padding:32px 0;color:var(--muted-2);font-size:.9rem;display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px}
+    footer a{color:var(--muted)}footer a:hover{color:var(--ink)}
+
+    @media (max-width:560px){
+      .nav-links a:not(.ghost){display:none}
+      section{padding:40px 0}
+    }
+  </style>
+</head>
+<body>
+  <div class="accent-bar"></div>
+
+  <div class="wrap">
+    <nav>
+      <a class="brand" href="/">
+        <img src="/assets/icon-192.png" alt="SignalForge">
+        SignalForge
+      </a>
+      <div class="nav-links">
+        <a href="#capabilities">Capabilities</a>
+        <a href="#endpoints">API</a>
+        <a href="https://github.com/sheharyarr-ahmed/signalforge">GitHub</a>
+        <a class="ghost" href="https://sheryyahmed457-signalforge.hf.space/docs">Live demo →</a>
+      </div>
+    </nav>
+
+    <!-- HERO -->
+    <header class="hero">
+      <img class="hero-glyph" src="/assets/icon-192.png" alt="SignalForge logo">
+      <h1>SignalForge</h1>
+      <div class="tag">Text in. Signal out.</div>
+      <p class="sub">A production-grade NLP inference microservice on open-source Hugging Face models. Multi-language sentiment, zero-shot classification, local embeddings, and pgvector semantic search — FastAPI, CPU-only, $0 infrastructure.</p>
+      <div class="cta">
+        <a class="btn primary" href="https://sheryyahmed457-signalforge.hf.space/docs">Try the live API →</a>
+        <a class="btn secondary" href="https://github.com/sheharyarr-ahmed/signalforge">View source</a>
+      </div>
+      <div class="chips">
+        <span>FastAPI</span><span>Hugging Face</span><span>sentence-transformers</span><span>Supabase pgvector</span><span>Pydantic v2</span><span>Docker</span>
+      </div>
+    </header>
+
+    <!-- CAPABILITIES -->
+    <section id="capabilities">
+      <div class="eyebrow">Capabilities</div>
+      <h2>Five endpoints, one clean contract</h2>
+      <p class="lede">Every response carries an <code>inference_metadata</code> block — which model served it, latency, and whether it fell back to local CPU.</p>
+      <div class="grid">
+        <div class="card">
+          <img src="/assets/features/sentiment.png" alt="">
+          <h3>Sentiment</h3>
+          <p>Multi-language sentiment with an API-to-local CPU fallback path.</p>
+        </div>
+        <div class="card">
+          <img src="/assets/features/zero-shot.png" alt="">
+          <h3>Zero-shot</h3>
+          <p>Classify text against your own custom label set — no training.</p>
+        </div>
+        <div class="card">
+          <img src="/assets/features/embeddings.png" alt="">
+          <h3>Embeddings</h3>
+          <p>Local 384-dimensional vectors via sentence-transformers.</p>
+        </div>
+        <div class="card">
+          <img src="/assets/features/semantic-search.png" alt="">
+          <h3>Semantic search</h3>
+          <p>Cosine similarity over Supabase pgvector, ranked by relevance.</p>
+        </div>
+        <div class="card">
+          <img src="/assets/features/observability.png" alt="">
+          <h3>Observability</h3>
+          <p>Traceable <code>inference_metadata</code> on every single response.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ENDPOINTS -->
+    <section id="endpoints">
+      <div class="eyebrow">API surface</div>
+      <h2>Endpoints</h2>
+      <p class="lede">Strict Pydantic v2 at every boundary. Four-class Hugging Face error handling — no generic catch-all.</p>
+      <div class="table-scroll">
+        <table>
+          <thead>
+            <tr><th>Method</th><th>Path</th><th>Does</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><span class="method">GET</span></td><td><code>/health</code></td><td>Zero-dependency liveness check.</td></tr>
+            <tr><td><span class="method">POST</span></td><td><code>/api/v1/sentiment</code></td><td>Multi-language sentiment; HF API with local CPU fallback.</td></tr>
+            <tr><td><span class="method">POST</span></td><td><code>/api/v1/classify</code></td><td>Zero-shot against caller-supplied labels (API-only).</td></tr>
+            <tr><td><span class="method">POST</span></td><td><code>/api/v1/embed</code></td><td>Local 384-dim embeddings; stored in pgvector.</td></tr>
+            <tr><td><span class="method">POST</span></td><td><code>/api/v1/search</code></td><td>Semantic search over stored documents.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- CODE SAMPLE -->
+    <section>
+      <div class="eyebrow">Quickstart</div>
+      <h2>One curl away</h2>
+      <p class="lede">Every inference response reports its own provenance.</p>
+      <div class="code">
+        <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span></div>
+<pre><span class="c-com"># Multi-language sentiment</span>
+<span class="c-cmd">curl -s -X POST https://sheryyahmed457-signalforge.hf.space/api/v1/sentiment \
+  -H 'Content-Type: application/json' \
+  -d '{"text":"Este producto es increíble"}'</span>
+
+<span class="c-com"># → response</span>
+{
+  <span class="c-key">"label"</span>: <span class="c-str">"positive"</span>,
+  <span class="c-key">"inference_metadata"</span>: {
+    <span class="c-key">"model"</span>: <span class="c-str">"cardiffnlp/twitter-xlm-roberta-base-sentiment"</span>,
+    <span class="c-key">"provider"</span>: <span class="c-str">"huggingface_api"</span>,
+    <span class="c-key">"processing_time_ms"</span>: <span class="c-bool">412</span>,
+    <span class="c-key">"fallback_triggered"</span>: <span class="c-bool">false</span>,
+    <span class="c-key">"confidence"</span>: <span class="c-bool">0.97</span>
+  }
+}</pre>
+      </div>
+    </section>
+
+    <!-- HONEST NOTE -->
+    <section>
+      <div class="note">
+        <div class="ico">🛰️</div>
+        <p><b>Runs on free-tier infrastructure.</b> The Hugging Face Space sleeps after inactivity (~1 min cold wake) and Supabase pauses after ~7 idle days. This is a portfolio artifact demonstrating open-source ML deployment discipline — not a high-availability production endpoint. The repo's <a href="https://github.com/sheharyarr-ahmed/signalforge/blob/main/docs/SCALING.md">SCALING.md</a> documents every free-tier limit and its paid upgrade path.</p>
+      </div>
+    </section>
+  </div>
+
+  <footer>
+    <div class="wrap" style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;width:100%;padding:0 24px">
+      <span>SignalForge · built by Sheharyar Ahmed</span>
+      <span>
+        <a href="https://sheryyahmed457-signalforge.hf.space/docs">Live demo</a> ·
+        <a href="https://github.com/sheharyarr-ahmed/signalforge">GitHub</a>
+      </span>
+    </div>
+  </footer>
+</body>
+</html>
