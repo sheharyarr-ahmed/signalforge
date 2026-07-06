@@ -13,6 +13,13 @@ thumbnail: https://raw.githubusercontent.com/sheharyarr-ahmed/signalforge/main/d
   <img src="docs/brand/hf-cover.png" alt="SignalForge — Text in. Signal out." width="720">
 </p>
 
+<p align="center">
+  <a href="https://signalforge-liard.vercel.app"><b>Live site</b></a> ·
+  <a href="https://sheryyahmed457-signalforge.hf.space/docs"><b>Live API demo</b></a> ·
+  <a href="./docs/ARCHITECTURE.md">Architecture</a> ·
+  <a href="./docs/SCALING.md">Scaling</a>
+</p>
+
 # SignalForge
 
 **Production-grade NLP inference service on Hugging Face open-source models** — multi-language sentiment with API/local fallback, zero-shot document classification, and local embeddings with pgvector semantic search. FastAPI, CPU-only, $0 infrastructure.
@@ -138,9 +145,10 @@ curl -s -X POST $BASE/api/v1/search \
 
 ## Live demo
 
-Deployed on [Hugging Face Spaces](https://huggingface.co/spaces) (free Docker SDK, CPU basic):
+- **Landing site:** **[signalforge-liard.vercel.app](https://signalforge-liard.vercel.app)** — project overview (static, on Vercel).
+- **Live API:** deployed on [Hugging Face Spaces](https://huggingface.co/spaces) (free Docker SDK, CPU basic) — **[https://sheryyahmed457-signalforge.hf.space](https://sheryyahmed457-signalforge.hf.space)**; open [`/docs`](https://sheryyahmed457-signalforge.hf.space/docs) for the interactive Swagger UI (the demo surface).
 
-**[https://sheryyahmed457-signalforge.hf.space](https://sheryyahmed457-signalforge.hf.space)** — open [`/docs`](https://sheryyahmed457-signalforge.hf.space/docs) for the interactive Swagger UI (the demo surface).
+The FastAPI service runs on HF Spaces because it bakes ~1.1 GB of local model weights into a Docker image — a workload that does not fit Vercel's serverless bundle limit. Vercel hosts the static front door only.
 
 ⚠️ **Important:** The free Hugging Face Space sleeps after ~48 hours of inactivity (~1 minute cold wake on first request). Supabase free tier pauses after ~7 idle days and requires manual dashboard resume. See [SCALING.md](./docs/SCALING.md) for honest free-tier limits and production upgrade paths. A daily GitHub Actions keep-alive ping (`.github/workflows/keepalive.yml`) mitigates both.
 
